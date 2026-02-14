@@ -1,6 +1,5 @@
 package com.stormflag.controller;
 
-import com.stormflag.config.NodeConfig;
 import org.springframework.web.bind.annotation.*;
 
 import com.stormflag.raft.VoteRequest;
@@ -11,11 +10,9 @@ import com.stormflag.raft.RaftNode;
 @RequestMapping("/internal")
 public class InternalController {
 
-    private final NodeConfig nodeConfig;
     private final RaftNode raftNode;
 
-    public InternalController(NodeConfig nodeConfig, RaftNode raftNode) {
-        this.nodeConfig = nodeConfig;
+    public InternalController(RaftNode raftNode) {
         this.raftNode = raftNode;
     }
 
