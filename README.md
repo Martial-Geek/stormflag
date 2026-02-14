@@ -18,6 +18,12 @@ StormFlag is a lightweight distributed feature flag service built in Java.
 - Nodes run on separate ports
 - Inter-node HTTP communication implemented
 
+## Heartbeat Phase
+
+- Nodes automatically send heartbeat every 3 seconds
+- Peer reachability detection implemented
+- Foundation for leader election
+
 ### API Structure
 
 Public API:

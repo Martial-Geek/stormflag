@@ -19,7 +19,6 @@ public class InternalController {
     public Map<String, Object> ping() {
         return Map.of(
                 "nodeId", nodeConfig.getNodeId(),
-                "status", "alive"
-        );
+                "status", "alive");
     }
 }

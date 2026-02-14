@@ -30,14 +30,12 @@ public class FeatureFlagController {
         if (enabled == null) {
             return Map.of(
                     "error", "Flag not found",
-                    "key", key
-            );
+                    "key", key);
         }
 
         return Map.of(
                 "key", key,
-                "enabled", enabled
-        );
+                "enabled", enabled);
     }
 
     @GetMapping

@@ -14,7 +14,7 @@ public class ClusterController {
     private final NodeConfig nodeConfig;
 
     public ClusterController(ClusterService clusterService,
-                             NodeConfig nodeConfig) {
+            NodeConfig nodeConfig) {
         this.clusterService = clusterService;
         this.nodeConfig = nodeConfig;
     }
@@ -29,7 +29,6 @@ public class ClusterController {
     public Map<String, Object> nodeInfo() {
         return Map.of(
                 "nodeId", nodeConfig.getNodeId(),
-                "peers", nodeConfig.getPeers()
-        );
+                "peers", nodeConfig.getPeers());
     }
 }

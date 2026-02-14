@@ -3,6 +3,8 @@ package com.stormflag.service;
 import com.stormflag.config.NodeConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import java.time.LocalTime;
 
 import java.util.List;
 
@@ -13,7 +15,7 @@ public class ClusterService {
     private final RestTemplate restTemplate;
 
     public ClusterService(NodeConfig nodeConfig,
-                          RestTemplate restTemplate) {
+            RestTemplate restTemplate) {
         this.nodeConfig = nodeConfig;
         this.restTemplate = restTemplate;
     }
@@ -25,12 +27,17 @@ public class ClusterService {
             try {
                 String response = restTemplate.getForObject(
                         peer + "/internal/ping",
-                        String.class
-                );
+                        String.class);
                 System.out.println("Ping response from " + peer + ": " + response);
             } catch (Exception e) {
                 System.out.println("Failed to reach " + peer);
             }
         }
+    }
+
+    @Scheduled(fixedRate = 3000)
+    public void heartbeat() {
+        System.out.println("[" + nodeConfig.getNodeId() + "] Heartbeat at " + LocalTime.now());
+        pingPeers();
     }
 }
