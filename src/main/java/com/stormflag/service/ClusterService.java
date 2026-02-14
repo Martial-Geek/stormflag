@@ -1,10 +1,13 @@
 package com.stormflag.service;
 
 import com.stormflag.config.NodeConfig;
+import com.stormflag.raft.NodeState;
+import com.stormflag.raft.RaftNode;
+import com.stormflag.raft.VoteRequest;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import java.time.LocalTime;
 
 import java.util.List;
 
@@ -13,11 +16,14 @@ public class ClusterService {
 
     private final NodeConfig nodeConfig;
     private final RestTemplate restTemplate;
+    private final RaftNode raftNode;
 
     public ClusterService(NodeConfig nodeConfig,
-            RestTemplate restTemplate) {
+            RestTemplate restTemplate,
+            RaftNode raftNode) {
         this.nodeConfig = nodeConfig;
         this.restTemplate = restTemplate;
+        this.raftNode = raftNode;
     }
 
     public void pingPeers() {
@@ -35,9 +41,30 @@ public class ClusterService {
         }
     }
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedRate = 2000)
     public void heartbeat() {
-        System.out.println("[" + nodeConfig.getNodeId() + "] Heartbeat at " + LocalTime.now());
-        pingPeers();
+
+        if (raftNode.getState() != NodeState.LEADER) {
+            return;
+        }
+
+        VoteRequest heartbeat = new VoteRequest(
+                raftNode.getCurrentTerm(),
+                nodeConfig.getNodeId());
+
+        for (String peer : nodeConfig.getPeers()) {
+            try {
+                restTemplate.postForObject(
+                        peer + "/internal/heartbeat",
+                        heartbeat,
+                        Void.class);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1000)
+    public void checkElection() {
+        raftNode.checkElectionTimeout();
     }
 }
